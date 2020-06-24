@@ -20,9 +20,12 @@ namespace MusicSorter
 			public string Full;     //полная строка пути
 			public string Path;     //путь к файлу
 			public string File;     //файл
-			public string Singer;   //исполнитель
+			public string Singer;   //исполнитель основной
+			public string Singers;  //исполнитель
 			public string Title;    //название
 			public string Format;   //формат
+
+			private string[] Separators = {", ", " vs. ", " feat. ", " & "}; 
 
 			//конструктор обработки строки
 			public Song(string str)
@@ -33,7 +36,18 @@ namespace MusicSorter
 				Full = str;
 				Path = str.Substring(0, indSlash);
 				File = str.Substring(indSlash + 1);
-				Singer = str.Substring(indSlash + 1, indDash - indSlash - 1);
+				Singer = ""; //что бы проверить, что исполнитель всего один
+				Singers = str.Substring(indSlash + 1, indDash - indSlash - 1); //если исполнителей много
+				foreach (string Sep in Separators) //поиск разделителя
+				{
+					int indSep = Singers.IndexOf(Sep);
+					if (indSep != -1)			//если есть, берём первого исполнителя
+					{
+						Singer = Singers.Substring(0, indSep); //первый до разделителя
+						break;
+					}
+				}
+				if (Singer == "") Singer = Singers; //если исполнитель всего один
 				Title = str.Substring(indDash + 3, indPoint - indDash - 3);
 				Format = str.Substring(indPoint);
 			}
